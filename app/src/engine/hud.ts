@@ -98,6 +98,19 @@ export class Hud {
     if (st.frame > 0.001) this.cropMarks(c, st.frame);
     if (st.readout > 0.001) { c.save(); c.globalAlpha *= st.readout; this.readout(c, t, st); c.restore(); }
     this.caption(c, t);
+
+    // Reka Creative Labs Top Telemetry Header
+    c.save();
+    c.font = font(F.mono(500), 12);
+    c.letterSpacing = '2px';
+    c.fillStyle = this.ink ? rgba('ink', 0.65) : rgba('bone', 0.55);
+    c.fillText('SYS // REKA CREATIVE LABS · AI GROWTH LAB · 750+ BRANDS', 64, 46);
+    c.textAlign = 'right';
+    c.fillStyle = rgba('signal', 0.95);
+    c.fillText('ROAS: 4.2x · ₹27Cr+ REVENUE · SPRINT: 24–48H', W - 64, 46);
+    c.letterSpacing = '0px';
+    c.restore();
+
     return L.upload();
   }
 

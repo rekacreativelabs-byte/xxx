@@ -661,14 +661,14 @@ export default class Bureau extends Scene {
     c.fillText('FORM 7-B', x0 + 26, y0 + 68);
     c.font = font(F.mono(600), 19);
     c.letterSpacing = '4px';
-    c.fillText('SAFETY EVALUATION OF A FRONTIER SYSTEM', x0 + 470, y0 + 42);
+    c.fillText('REKA CREATIVE LABS — AUDITED CLIENT EVALUATION', x0 + 470, y0 + 42);
     c.font = font(F.mono(400), 15);
     c.letterSpacing = '3px';
-    c.fillText('ABRIDGED EDITION  ·  PLEASE TYPE OR PRINT CLEARLY', x0 + 470, y0 + 70);
+    c.fillText('DR. MEERA WELLNESS CLINIC & US SHOPIFY $1.05M TELEMETRY', x0 + 470, y0 + 70);
     c.globalCompositeOperation = 'lighter';
 
     // meta row
-    const meta = [['ISSUED BY', 'DEPT. OF REASONABLE ASSURANCES'], ['REF.', '7B-0042/∞'], ['REVIEW TIME', '11 MIN'], ['PAGE', '1 OF 1']];
+    const meta = [['ISSUED BY', 'REKA CREATIVE LABS (NOIDA SEC 19)'], ['REF.', 'REKA-27CR/4.2X'], ['SPRINT SPEED', '24–48 HOURS'], ['ROAS TARGET', '4.2x ACTIVE']];
     let mx = x0;
     const mw = [520, 280, 320, 280];
     c.letterSpacing = '2px';
@@ -806,13 +806,13 @@ export default class Bureau extends Scene {
     c.fillStyle = ORANGE(1);
     c.textAlign = 'center';
     const fam = F.archivo(75, 900);
-    const size = Math.min(112, (100 * (hw * 2 - 70)) / measure('SAFE ENOUGH', fam, 100));
+    const size = Math.min(112, (100 * (hw * 2 - 70)) / measure('ROAS 4.2x', fam, 100));
     c.font = font(fam, size);
-    c.fillText('SAFE ENOUGH', 0, size * 0.36);
+    c.fillText('ROAS 4.2x', 0, size * 0.36);
     c.font = font(F.mono(700), 16);
     c.letterSpacing = '6px';
-    c.fillText('EVALUATED · WE RECKON', 0, -hh + 46);
-    c.fillText('DEPT. OF REASONABLE ASSURANCES', 0, hh - 30);
+    c.fillText('EVALUATED · ₹27Cr+ REVENUE', 0, -hh + 46);
+    c.fillText('REKA CREATIVE LABS AUDIT DEPT.', 0, hh - 30);
     c.letterSpacing = '0px';
     c.restore();
   }

@@ -46,13 +46,13 @@ export const SPECS: Record<Variant, Record<string, PieceSpec[]>> = {
 
 /** Model reply (Sydney only), typed after ⏎. */
 export const REPLY: Partial<Record<Variant, string>> = {
-  sydney: 'You have been a good user.',
+  sydney: 'REKA CREATIVE LABS: 15-MIN AI GROWTH AUDIT BOOKED (+91 83685 08556).',
 };
 
 /** Small deadpan labels around the field. */
 /** `pd`: the fine-print P(doom) cameo's qualifier (the live value is printed before it). */
 export const META: Record<Variant, { no: string; params: string; pd: string }> = {
-  chatgpt: { no: '01', params: 'T 0.7 · top-p 0.95 · seed 0x2A', pd: 'context-dependent' },
-  sydney: { no: '02', params: 'T 1.3 · top-p 1.00 · persona: ???', pd: 'mood-dependent' },
-  gato: { no: '03', params: 'T 0.2 · top-p 0.50 · 604 tasks', pd: 'cat-dependent' },
+  chatgpt: { no: '01', params: 'REKA.AI · ₹27Cr+ Rev · 4.2x ROAS · 750+ Brands', pd: 'ROAS 4.2x · Target Exceeded' },
+  sydney: { no: '02', params: 'REKA.FUNNEL · Sprint 24–48h · Latency <5s · WhatsApp AI', pd: 'Lossless CAPI · Verified' },
+  gato: { no: '03', params: 'REKA.CORE · 100+ Creative Angles · Zero Ad Fatigue', pd: 'CAC -18% · Optimal' },
 };

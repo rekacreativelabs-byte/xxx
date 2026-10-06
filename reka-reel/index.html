@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reka Creative Labs — Autonomous AI Growth & Marketing Reel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Space+Grotesk:wght@400;600;700;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    :root {
+      --bg: #040508;
+      --card-bg: rgba(10, 12, 18, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --signal: #ff4d12;
+      --ember: #ff8a3d;
+      --cyan: #00f0ff;
+      --emerald: #00ff88;
+      --purple: #a855f7;
+    }
+    body {
+      background: var(--bg);
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 16px;
+    }
+    /* Main Screen Stage */
+    #stage-container {
+      position: relative;
+      width: 1360px;
+      height: 765px;
+      max-width: 96vw;
+      max-height: 84vh;
+      aspect-ratio: 16 / 9;
+      background: radial-gradient(circle at 50% 20%, #0d111a 0%, #040508 85%);
+      border: 1px solid rgba(255, 77, 18, 0.25);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9), 0 0 50px rgba(255, 77, 18, 0.12), inset 0 0 40px rgba(0, 240, 255, 0.03);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    /* Ambient Glow Behind Stage */
+    .glow-aura {
+      position: absolute;
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 77, 18, 0.15) 0%, rgba(0, 240, 255, 0.08) 50%, transparent 70%);
+      filter: blur(80px);
+      z-index: -1;
+      pointer-events: none;
+      animation: breathe 8s ease-in-out infinite alternate;
+    }
+    @keyframes breathe {
+      0% { transform: scale(1) translate(-30px, -20px); opacity: 0.6; }
+      100% { transform: scale(1.15) translate(30px, 20px); opacity: 1; }
+    }
+    /* Top & Bottom HUD Overlays */
+    #hud-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 30px;
+      z-index: 10;
+    }
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .hud-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 77, 18, 0.12);
+      border: 1px solid rgba(255, 77, 18, 0.4);
+      color: #ff6a38;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      backdrop-filter: blur(8px);
+    }
+    .hud-chip::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ff4d12;
+      box-shadow: 0 0 10px #ff4d12;
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.7); }
+    }
+    .hud-scene-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 2.5px;
+      background: linear-gradient(90deg, #fff, rgba(255,255,255,0.6));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Control Deck */
+    #control-deck {
+      margin-top: 18px;
+      width: 1360px;
+      max-width: 96vw;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 22px;
+      background: rgba(14, 17, 24, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f1f5f9;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn:hover {
+      background: var(--signal);
+      border-color: var(--signal);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(255, 77, 18, 0.45);
+      transform: translateY(-1px);
+    }
+    .btn.active {
+      background: var(--signal);
+      border-color: var(--signal);
+      color: #fff;
+    }
+    .scrubber-zone {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    input[type="range"] {
+      flex: 1;
+      accent-color: var(--signal);
+      cursor: pointer;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      outline: none;
+    }
+    .time-digits {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.5px;
+      min-width: 140px;
+    }
+    .hotkey-hints {
+      font-size: 11px;
+      color: #64748b;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-aura"></div>
+
+  <div id="stage-container">
+    <canvas id="viewport" width="1920" height="1080"></canvas>
+    <div id="hud-overlay">
+      <div class="hud-row">
+        <div>SYS // REKA.AI.ENGINE &bull; 6-TO-8 FIGURE SCALE &bull; DETERMINISTIC 60FPS</div>
+        <div class="hud-chip">ATTRIBUTION: LIVE REAL-TIME</div>
+      </div>
+      <div class="hud-row" style="align-items: flex-end;">
+        <div>LATENCY: &lt;5s &bull; SPRINT: 24–48h &bull; ZERO GUESSWORK</div>
+        <div class="hud-scene-title" id="scene-name-tag">PLATE 01 / 06 &bull; GENESIS HOOK</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="control-deck">
+    <button class="btn" id="btn-play">
+      <span id="play-icon">❚❚</span> <span id="play-text">PAUSE</span>
+    </button>
+    <button class="btn" id="btn-sound">
+      <span>🔊</span> <span id="sound-text">AUDIO SYNTH: ON</span>
+    </button>
+    <button class="btn" id="btn-prev">◀ PREV</button>
+    <button class="btn" id="btn-next">NEXT ▶</button>
+    
+    <div class="scrubber-zone">
+      <input type="range" id="scrubber" min="0" max="60" step="0.0166" value="0">
+      <span class="time-digits" id="time-display">00:00.00 / 01:00.00</span>
+    </div>
+
+    <button class="btn" id="btn-fs">⛶ FULLSCREEN</button>
+    <button class="btn" id="btn-record" style="border-color: #ff0055; color: #ff3377;">● REC MP4</button>
+    <span class="hotkey-hints">[SPACE] Play &bull; [←/→] Seek &bull; [M] Mute</span>
+  </div>
+
+  <script>
+    // ========================================================
+    // 1. ENGINE CONFIG & STATE
+    // ========================================================
+    const TOTAL_DURATION = 60.0; // 60-Second Full Agency Cinema Reel
+    const CANVAS = document.getElementById('viewport');
+    const CTX = CANVAS.getContext('2d');
+    const SCRUBBER = document.getElementById('scrubber');
+    const TIME_DISPLAY = document.getElementById('time-display');
+    const SCENE_TAG = document.getElementById('scene-name-tag');
+    const PLAY_BTN = document.getElementById('btn-play');
+    const PLAY_ICON = document.getElementById('play-icon');
+    const PLAY_TEXT = document.getElementById('play-text');
+    const SOUND_BTN = document.getElementById('btn-sound');
+    const SOUND_TEXT = document.getElementById('sound-text');
+
+    let currentTime = 0;
+    let isPlaying = true;
+    let lastTimestamp = performance.now();
+    let audioEnabled = true;
+
+    // Palette: High-End Cyber Technical
+    const PALETTE = {
+      ink: '#040508',
+      inkCard: '#0B0E17',
+      inkCardLight: '#121624',
+      border: 'rgba(255, 255, 255, 0.08)',
+      borderBright: 'rgba(255, 77, 18, 0.35)',
+      bone: '#F8F9FA',
+      ash: '#8E98A8',
+      signal: '#FF4D12',     // Toxic orange spark
+      ember: '#FFA043',
+      cyan: '#00F0FF',       // Cyber telemetry cyan
+      emerald: '#00FF88',    // Verified green
+      crimson: '#FF2A4D',    // Traditional agency alert
+      purple: '#B042FF'
+    };
+
+    // 6 Cinematic Plates Timeline
+    const SCENES = [
+      { id: 'genesis',     start: 0.0,  end: 9.0,  name: 'PLATE 01 / 06 &bull; THE AUTONOMOUS HOOK' },
+      { id: 'dualside',    start: 9.0,  end: 20.0, name: 'PLATE 02 / 06 &bull; CUSTOMER SIDE VS REKA AI CORE' },
+      { id: 'engines',     start: 20.0, end: 31.0, name: 'PLATE 03 / 06 &bull; THE 3 SPECIALIZED GROWTH ENGINES' },
+      { id: 'services',    start: 31.0, end: 41.0, name: 'PLATE 04 / 06 &bull; HIGH-VELOCITY SERVICE SUITE & PLANS' },
+      { id: 'telemetry',   start: 41.0, end: 51.0, name: 'PLATE 05 / 06 &bull; 100% AUDITED DUAL TELEMETRY' },
+      { id: 'matrix_cta',  start: 51.0, end: 60.0, name: 'PLATE 06 / 06 &bull; FOUNDER MATRIX & 15-MIN AUDIT' }
+    ];
+
+    // ========================================================
+    // 2. PROCEDURAL WEB AUDIO SYNTHESIZER (NO EXTERNAL MP3 NEEDED!)
+    // Generates punchy cyber-bass drones, rhythmic pulses & risers
+    // ========================================================
+    let audioCtx = null;
+    let droneOsc = null;
+    let droneGain = null;
+    let pulseGain = null;
+
+    function initAudio() {
+      if (audioCtx) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+
+        // Master Drone
+        droneOsc = audioCtx.createOscillator();
+        droneOsc.type = 'sawtooth';
+        droneOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // A1 bass
+
+        const droneFilter = audioCtx.createBiquadFilter();
+        droneFilter.type = 'lowpass';
+        droneFilter.frequency.setValueAtTime(140, audioCtx.currentTime);
+
+        droneGain = audioCtx.createGain();
+        droneGain.gain.setValueAtTime(audioEnabled ? 0.15 : 0, audioCtx.currentTime);
+
+        droneOsc.connect(droneFilter);
+        droneFilter.connect(droneGain);
+        droneGain.connect(audioCtx.destination);
+        droneOsc.start();
+
+        // Rhythmic Pulse Gain
+        pulseGain = audioCtx.createGain();
+        pulseGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      } catch(e) {
+        console.warn('Audio not initialized yet:', e);
+      }
+    }
+
+    function triggerAudioBeat(type = 'kick') {
+      if (!audioCtx || !audioEnabled) return;
+      const t = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      if (type === 'kick') {
+        osc.frequency.setValueAtTime(120, t);
+        osc.frequency.exponentialRampToValueAtTime(32, t + 0.15);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      } else if (type === 'snap') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, t);
+        osc.frequency.exponentialRampToValueAtTime(80, t + 0.08);
+        gain.gain.setValueAtTime(0.18, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      } else if (type === 'riser') {
+        osc.frequency.setValueAtTime(100, t);
+        osc.frequency.linearRampToValueAtTime(380, t + 0.4);
+        gain.gain.setValueAtTime(0.05, t);
+        gain.gain.linearRampToValueAtTime(0.2, t + 0.35);
+        gain.gain.linearRampToValueAtTime(0.001, t + 0.4);
+      }
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.4);
+    }
+
+    SOUND_BTN.addEventListener('click', () => {
+      initAudio();
+      audioEnabled = !audioEnabled;
+      if (droneGain) {
+        droneGain.gain.setValueAtTime(audioEnabled ? 0.15 : 0, audioCtx.currentTime);
+      }
+      SOUND_TEXT.innerText = audioEnabled ? 'AUDIO SYNTH: ON' : 'AUDIO SYNTH: MUTED';
+      SOUND_BTN.classList.toggle('active', audioEnabled);
+    });
+
+    // ========================================================
+    // 3. MATH & RENDERING UTILITIES
+    // ========================================================
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    const easeOutExpo = (x) => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+    const easeOutBack = (x) => {
+      const c1 = 1.70158;
+      const c3 = c1 + 1;
+      return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+    };
+
+    // Deterministic pseudo-random
+    function hash(n) {
+      const s = Math.sin(n) * 43758.5453123;
+      return s - Math.floor(s);
+    }
+
+    // Background 3D Perspective Grid + Holographic Hairlines
+    function drawCyberBackground(ctx, t) {
+      ctx.save();
+      
+      // Fine dot grid
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.035)';
+      const step = 60;
+      for (let x = 30; x < 1920; x += step) {
+        for (let y = 30; y < 1080; y += step) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Sweeping horizontal laser scanline
+      const scanY = ((t * 180) % 1160) - 40;
+      const grad = ctx.createLinearGradient(0, scanY - 30, 0, scanY + 30);
+      grad.addColorStop(0, 'rgba(0, 240, 255, 0)');
+      grad.addColorStop(0.5, 'rgba(0, 240, 255, 0.08)');
+      grad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, scanY - 30, 1920, 60);
+
+      // Swiss Crop Marks
+      ctx.strokeStyle = 'rgba(255, 77, 18, 0.35)';
+      ctx.lineWidth = 1.5;
+      const m = 50, len = 28;
+      // Top Left
+      ctx.beginPath(); ctx.moveTo(m, m + len); ctx.lineTo(m, m); ctx.lineTo(m + len, m); ctx.stroke();
+      // Top Right
+      ctx.beginPath(); ctx.moveTo(1920 - m - len, m); ctx.lineTo(1920 - m, m); ctx.lineTo(1920 - m, m + len); ctx.stroke();
+      // Bottom Left
+      ctx.beginPath(); ctx.moveTo(m, 1080 - m - len); ctx.lineTo(m, 1080 - m); ctx.lineTo(m + len, 1080 - m); ctx.stroke();
+      // Bottom Right
+      ctx.beginPath(); ctx.moveTo(1920 - m - len, 1080 - m); ctx.lineTo(1920 - m, 1080 - m); ctx.lineTo(1920 - m, 1080 - m - len); ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // Core Spark / Photon Orb
+    function drawSpark(ctx, x, y, size = 10, label = '', color = PALETTE.signal) {
+      ctx.save();
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, size * 3.5);
+      glow.addColorStop(0, color);
+      glow.addColorStop(0.4, 'rgba(255, 77, 18, 0.5)');
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(x, y, size * 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // White Hot Center
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(x, y, size * 0.45, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (label) {
+        ctx.font = '700 13px "JetBrains Mono"';
+        ctx.fillStyle = color;
+        ctx.fillText(label, x + size + 10, y + 4);
+      }
+      ctx.restore();
+    }
+
+    // Glass Card Primitive
+    function drawGlassCard(ctx, x, y, w, h, borderCol = PALETTE.border, bgCol = PALETTE.inkCard) {
+      ctx.save();
+      ctx.fillStyle = bgCol;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = borderCol;
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(x, y, w, h);
+
+      // Micro corner accent
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillRect(x, y, 6, 2);
+      ctx.fillRect(x, y, 2, 6);
+      ctx.restore();
+    }
+
+    // ========================================================
+    // 4. SCENE IMPLEMENTATIONS (THE 6 PLATES)
+    // ========================================================
+
+    // --------------------------------------------------------
+    // PLATE 01: THE AUTONOMOUS HOOK (0s - 9s)
+    // --------------------------------------------------------
+    function renderGenesis(ctx, lt, p) {
+      ctx.save();
+
+      // Trajectory spark
+      const sparkP = clamp(lt / 4.5, 0, 1);
+      const sparkX = 140 + easeOutExpo(sparkP) * 1640;
+      const sparkY = 560 + Math.sin(lt * 3.5) * 40;
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 77, 18, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 6]);
+      ctx.beginPath();
+      ctx.moveTo(140, 560);
+      ctx.lineTo(sparkX, sparkY);
+      ctx.stroke();
+      ctx.restore();
+
+      drawSpark(ctx, sparkX, sparkY, 14, '[ACTIVE SPRINT: 24–48H]');
+
+      // Tagline
+      const tagP = clamp(lt / 0.8, 0, 1);
+      ctx.font = '700 14px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.globalAlpha = tagP;
+      ctx.fillText('// REKA CREATIVE LABS &bull; AUTONOMOUS AI MARKETING & GROWTH LAB', 140, 260);
+
+      // Huge Hero Typography
+      ctx.font = '900 86px "Syne", sans-serif';
+      ctx.fillStyle = PALETTE.bone;
+
+      const words = ["ENGINEERING", "PREDICTABLE", "REVENUE."];
+      words.forEach((w, idx) => {
+        const wp = clamp((lt - 0.6 - idx * 0.45) / 0.6, 0, 1);
+        const yOffset = (1 - easeOutBack(wp)) * 50;
+        ctx.save();
+        ctx.globalAlpha = wp;
+        ctx.translate(140, 360 + idx * 98 + yOffset);
+        ctx.fillText(w, 0, 0);
+        ctx.restore();
+      });
+
+      // Sub-hero description
+      if (lt > 2.5) {
+        ctx.font = '500 20px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.ash;
+        ctx.fillText('We scale 6- to 8-figure brands with autonomous AI ad creatives,', 140, 690);
+        ctx.fillText('full-funnel performance marketing, and zero guesswork.', 140, 722);
+      }
+
+      // Quick 4 metrics marquee at bottom
+      const metricP = clamp((lt - 3.8) / 0.8, 0, 1);
+      if (metricP > 0) {
+        ctx.globalAlpha = metricP;
+        const chips = [
+          { k: 'REVENUE GENERATED', v: '₹27Cr+' },
+          { k: 'AVG BLENDED ROAS', v: '4.2x' },
+          { k: 'BRANDS SCALED', v: '750+' },
+          { k: 'SPRINT VELOCITY', v: '24–48h' }
+        ];
+        chips.forEach((c, i) => {
+          const cx = 140 + i * 410;
+          drawGlassCard(ctx, cx, 800, 380, 95, PALETTE.borderBright, 'rgba(11, 14, 23, 0.95)');
+          ctx.font = '700 12px "JetBrains Mono"';
+          ctx.fillStyle = PALETTE.signal;
+          ctx.fillText(c.k, cx + 24, 836);
+          ctx.font = '900 36px "Space Grotesk"';
+          ctx.fillStyle = PALETTE.bone;
+          ctx.fillText(c.v, cx + 24, 876);
+        });
+      }
+
+      ctx.restore();
+    }
+
+    // --------------------------------------------------------
+    // PLATE 02: CUSTOMER EXPERIENCE VS REKA AUTONOMOUS CORE (9s - 20s)
+    // --------------------------------------------------------
+    function renderDualSide(ctx, lt, p) {
+      ctx.save();
+
+      // Plate Header
+      ctx.font = '700 14px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillText('// ARCHITECTURAL DUALITY : WHAT YOU SEE VS WHAT WE RUN', 140, 150);
+
+      ctx.font = '900 44px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('SEAMLESS FRONTEND EXPERIENCE &times; AUTONOMOUS AI BACKEND', 140, 205);
+
+      const splitW = 790;
+      const leftX = 140;
+      const rightX = 990;
+      const startY = 250;
+      const panelH = 680;
+
+      // ------------------------------------
+      // LEFT: CUSTOMER SIDE (Client & Patient Journey)
+      // ------------------------------------
+      const lp = clamp(lt / 0.8, 0, 1);
+      ctx.save();
+      ctx.globalAlpha = lp;
+      drawGlassCard(ctx, leftX, startY, splitW, panelH, 'rgba(0, 240, 255, 0.35)', 'rgba(8, 12, 20, 0.95)');
+      
+      // Header Badge
+      ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
+      ctx.fillRect(leftX + 24, startY + 24, 260, 28);
+      ctx.font = '800 12px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.cyan;
+      ctx.fillText('01 &bull; WHAT YOUR CUSTOMER SEES', leftX + 36, startY + 43);
+
+      ctx.font = '800 24px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('High-Friction Drops Eliminated', leftX + 24, startY + 95);
+
+      const custSteps = [
+        { num: '01', title: 'DISCOVER VIA HIGH-RETENTION HOOK', desc: 'Engaged through short-form reels engineered for 89.2% retention. Zero ad fatigue.', tag: 'VIRAL REELS' },
+        { num: '02', title: 'AUTHORITY EDUCATION & TRUST', desc: 'Encounter clinical/D2C case breakdowns. Patients & buyers understand value instantly.', tag: '100% SLEAZE-FREE' },
+        { num: '03', title: 'INSTANT CONVERSATIONAL WHATSAPP', desc: 'No waiting for 8 hours. Friendly AI answers pricing and availability in < 5 seconds.', tag: '< 5s RESPONSE' },
+        { num: '04', title: 'FRICTIONLESS 1-CLICK BOOKING', desc: 'Pre-qualified consultation slotted directly into the calendar with zero phone tag.', tag: 'SLOTTED IN CALENDAR' }
+      ];
+
+      custSteps.forEach((s, i) => {
+        const stepP = clamp((lt - 0.4 - i * 0.4) / 0.6, 0, 1);
+        const sy = startY + 130 + i * 128;
+        ctx.save();
+        ctx.globalAlpha = stepP;
+        drawGlassCard(ctx, leftX + 24, sy, splitW - 48, 112, 'rgba(255,255,255,0.06)', 'rgba(14, 18, 28, 0.6)');
+        
+        ctx.font = '900 22px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.cyan;
+        ctx.fillText(s.num, leftX + 44, sy + 40);
+
+        ctx.font = '700 15px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(s.title, leftX + 90, sy + 38);
+
+        ctx.font = '400 13px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.ash;
+        ctx.fillText(s.desc, leftX + 44, sy + 75);
+
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.12)';
+        ctx.fillRect(leftX + splitW - 190, sy + 20, 150, 22);
+        ctx.font = '700 10px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.cyan;
+        ctx.fillText(s.tag, leftX + splitW - 180, sy + 35);
+        ctx.restore();
+      });
+      ctx.restore();
+
+      // ------------------------------------
+      // RIGHT: HUMARA SIDE (Reka Autonomous AI Core)
+      // ------------------------------------
+      const rp = clamp((lt - 0.5) / 0.8, 0, 1);
+      ctx.save();
+      ctx.globalAlpha = rp;
+      drawGlassCard(ctx, rightX, startY, splitW, panelH, 'rgba(255, 77, 18, 0.45)', 'rgba(12, 10, 18, 0.95)');
+
+      // Header Badge
+      ctx.fillStyle = 'rgba(255, 77, 18, 0.15)';
+      ctx.fillRect(rightX + 24, startY + 24, 270, 28);
+      ctx.font = '800 12px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillText('02 &bull; WHAT REKA EXECUTES BACKEND', rightX + 36, startY + 43);
+
+      ctx.font = '800 24px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('Autonomous Marketing Infrastructure', rightX + 24, startY + 95);
+
+      const rekaSteps = [
+        { num: '⚡', title: '50–100+ DYNAMIC CREATIVE TESTING', desc: 'Deploy AI workflows to test angles across Meta/TikTok weekly. Dying ads killed before burning cash.', tag: '24-48H SPRINT' },
+        { num: '⚡', title: '3-SECOND AI INTENT & BUDGET SCORING', desc: 'Every inbound DM & lead is evaluated for intent. High-ticket buyers and HR deals flagged instantly.', tag: '< 3s INTENT SCORING' },
+        { num: '⚡', title: 'ALGORITHMIC CAC BUDGET REBALANCING', desc: 'Daily ad spend autonomously reallocated to whichever creative variation generates lowest CAC.', tag: 'ROAS: 4.2x' },
+        { num: '⚡', title: 'HUMAN REVIEW & VERIFIED CLOSING', desc: 'Zero unapproved spend. Human coordinators confirm leads and execute 15-min CEO optimization calls.', tag: '100% CONTROL' }
+      ];
+
+      rekaSteps.forEach((s, i) => {
+        const stepP = clamp((lt - 0.8 - i * 0.4) / 0.6, 0, 1);
+        const sy = startY + 130 + i * 128;
+        ctx.save();
+        ctx.globalAlpha = stepP;
+        drawGlassCard(ctx, rightX + 24, sy, splitW - 48, 112, 'rgba(255,255,255,0.06)', 'rgba(20, 14, 22, 0.6)');
+        
+        ctx.font = '900 20px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.signal;
+        ctx.fillText(s.num, rightX + 44, sy + 40);
+
+        ctx.font = '700 15px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(s.title, rightX + 90, sy + 38);
+
+        ctx.font = '400 13px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.ash;
+        ctx.fillText(s.desc, rightX + 44, sy + 75);
+
+        ctx.fillStyle = 'rgba(255, 77, 18, 0.15)';
+        ctx.fillRect(rightX + splitW - 190, sy + 20, 150, 22);
+        ctx.font = '700 10px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.signal;
+        ctx.fillText(s.tag, rightX + splitW - 180, sy + 35);
+        ctx.restore();
+      });
+      ctx.restore();
+
+      ctx.restore();
+    }
+
+    // --------------------------------------------------------
+    // PLATE 03: THE 3 SPECIALIZED GROWTH ENGINES (20s - 31s)
+    // --------------------------------------------------------
+    function renderEngines(ctx, lt, p) {
+      ctx.save();
+
+      ctx.font = '700 14px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillText('// HIGH-IMPACT VERTICALS : BUILT AROUND ONE OBJECTIVE', 140, 150);
+
+      ctx.font = '900 46px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('THREE SPECIALIZED GROWTH INFRASTRUCTURES', 140, 210);
+
+      const engines = [
+        {
+          num: 'GROWTH ENGINE 01',
+          name: 'D2C & E-COMMERCE',
+          sub: 'For Founders Building the Next Big Consumer Brand',
+          accent: PALETTE.signal,
+          specs: [
+            'Unified acquisition funnels across Meta & Google',
+            'AI-powered creative testing & 48h sprint velocity',
+            'High-converting Shopify landers (CVR 3.46%)',
+            'Lossless CAPI attribution & CAC reduction'
+          ],
+          badge: 'CUSTOM SCALING FRAMEWORK'
+        },
+        {
+          num: 'CLINICAL SYSTEM 02',
+          name: 'HEALTHCARE & DOCTORS',
+          sub: 'For Doctors, Clinics & Hospitals Scaling Patient Flow',
+          accent: PALETTE.cyan,
+          specs: [
+            'Digital patient journey: Discover → Trust → Book',
+            'Educational video content & authority profiling',
+            'Patient enquiry & WhatsApp communication automation',
+            'Dual channels: Clinic consultations + B2B Corporate HR'
+          ],
+          badge: 'PATIENT FLOW SYSTEM'
+        },
+        {
+          num: 'WELLNESS SYSTEM 03',
+          name: 'COACHES & CREATORS',
+          sub: 'For Wellness Coaches Ready for Premium Personal Branding',
+          accent: PALETTE.emerald,
+          specs: [
+            'Turn expertise into a high-ticket digital asset',
+            'High-retention reels framework (89.2% retention)',
+            'WhatsApp lead qualification & calendar booking',
+            'Consistent client pipeline without daily posting stress'
+          ],
+          badge: 'AUTHORITY ACQUISITION'
+        }
+      ];
+
+      const cardW = 520;
+      const cardH = 680;
+      const startX = 140;
+      const startY = 260;
+      const gap = 40;
+
+      engines.forEach((eng, i) => {
+        const ep = clamp((lt - i * 0.35) / 0.6, 0, 1);
+        const ee = easeOutBack(ep);
+        const x = startX + i * (cardW + gap);
+        const y = startY + (1 - ee) * 60;
+
+        ctx.save();
+        ctx.globalAlpha = ep;
+        drawGlassCard(ctx, x, y, cardW, cardH, eng.accent, 'rgba(10, 14, 22, 0.95)');
+
+        // Header Tag
+        ctx.font = '800 12px "JetBrains Mono"';
+        ctx.fillStyle = eng.accent;
+        ctx.fillText(eng.num, x + 30, y + 50);
+
+        ctx.font = '900 30px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(eng.name, x + 30, y + 95);
+
+        ctx.font = '500 13px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.ash;
+        ctx.fillText(eng.sub, x + 30, y + 130);
+
+        // Divider
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.beginPath();
+        ctx.moveTo(x + 30, y + 155);
+        ctx.lineTo(x + cardW - 30, y + 155);
+        ctx.stroke();
+
+        // Specs List
+        ctx.font = '700 14px "Space Grotesk"';
+        ctx.fillStyle = eng.accent;
+        ctx.fillText('WHAT WE BUILD & SCALE:', x + 30, y + 195);
+
+        eng.specs.forEach((sp, idx) => {
+          const sy = y + 240 + idx * 80;
+          ctx.font = '400 14px "JetBrains Mono"';
+          ctx.fillStyle = PALETTE.bone;
+          ctx.fillText(`✓ ${sp}`, x + 30, sy, cardW - 60);
+        });
+
+        // Bottom Badge
+        ctx.fillStyle = 'rgba(255,255,255,0.04)';
+        ctx.fillRect(x + 30, y + cardH - 80, cardW - 60, 48);
+        ctx.strokeStyle = eng.accent;
+        ctx.strokeRect(x + 30, y + cardH - 80, cardW - 60, 48);
+        ctx.font = '800 12px "JetBrains Mono"';
+        ctx.fillStyle = eng.accent;
+        ctx.fillText(eng.badge, x + 46, y + cardH - 50);
+
+        drawSpark(ctx, x + cardW - 55, y + cardH - 56, 8, '', eng.accent);
+
+        ctx.restore();
+      });
+
+      ctx.restore();
+    }
+
+    // --------------------------------------------------------
+    // PLATE 04: SERVICE SUITE & GROWTH PACKAGES (31s - 41s)
+    // --------------------------------------------------------
+    function renderServices(ctx, lt, p) {
+      ctx.save();
+
+      ctx.font = '700 14px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillText('// SERVICE SUITE & TRANSPARENT ENGAGEMENT TIERS', 140, 150);
+
+      ctx.font = '900 44px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('SCALABLE INFRASTRUCTURE FOR EVERY STAGE', 140, 205);
+
+      // Left Column: Capabilities List
+      const leftW = 680;
+      const services = [
+        { name: 'WEB DEVELOPMENT', price: 'FROM ₹50,000', desc: 'Custom responsive, SEO-ready, high-converting architecture' },
+        { name: 'DIGITAL MARKETING & META ADS', price: 'FROM ₹15,000/mo', desc: 'Full funnel Meta & Google Ads, lead gen, CAPI optimization' },
+        { name: 'BRAND DESIGN & CIP', price: 'FROM ₹30,000', desc: 'Visual identity, logo design, packaging, design systems' },
+        { name: 'CONTENT & VIRAL REELS', price: 'FROM ₹20,000', desc: 'Scriptwriting, motion graphics, high-retention reel edits' },
+        { name: 'AI WORKFLOW INTEGRATIONS', price: 'CUSTOM TIER', desc: 'Conversational WhatsApp bots, predictive analytics, auto-scoring' }
+      ];
+
+      services.forEach((s, i) => {
+        const sp = clamp((lt - i * 0.2) / 0.5, 0, 1);
+        const sy = 260 + i * 130;
+        ctx.save();
+        ctx.globalAlpha = sp;
+        drawGlassCard(ctx, 140, sy, leftW, 110, 'rgba(255,255,255,0.08)');
+        
+        ctx.font = '800 18px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(s.name, 170, sy + 40);
+
+        ctx.font = '800 14px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.signal;
+        ctx.fillText(s.price, 140 + leftW - 200, sy + 40);
+
+        ctx.font = '400 13px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.ash;
+        ctx.fillText(s.desc, 170, sy + 75);
+        ctx.restore();
+      });
+
+      // Right Column: The 3 Growth Plans
+      const plans = [
+        {
+          tier: 'STARTER BOOST',
+          price: '₹15,000/mo',
+          target: 'For New Brands',
+          features: ['Video content editing', 'Social media strategy', 'Monthly 4 posts & graphics', 'Email support']
+        },
+        {
+          tier: 'GROWTH ACCELERATOR',
+          price: '₹25,000/mo',
+          target: '★ MOST POPULAR &bull; For Scaling Brands',
+          accent: true,
+          features: ['Full Ad Campaign Management', 'High-Converting Lead Funnel', 'Weekly Creative Optimization', 'Direct Phone & Slack Support']
+        },
+        {
+          tier: 'PREMIUM DOMINATION',
+          price: '₹40,000/mo',
+          target: 'For Category Market Leaders',
+          features: ['Full Growth Automation & AI Bots', 'Dedicated Growth Manager', 'Advanced Omnichannel Ad Strategy', '24/7 VIP Priority Support']
+        }
+      ];
+
+      const rightStartX = 860;
+      const planW = 920;
+      plans.forEach((pl, idx) => {
+        const pp = clamp((lt - 0.4 - idx * 0.3) / 0.5, 0, 1);
+        const py = 260 + idx * 224;
+        ctx.save();
+        ctx.globalAlpha = pp;
+        drawGlassCard(ctx, rightStartX, py, planW, 204, pl.accent ? PALETTE.signal : 'rgba(255,255,255,0.08)', pl.accent ? 'rgba(20, 12, 16, 0.95)' : PALETTE.inkCard);
+
+        ctx.font = '900 24px "Space Grotesk"';
+        ctx.fillStyle = pl.accent ? PALETTE.signal : PALETTE.bone;
+        ctx.fillText(pl.tier, rightStartX + 30, py + 45);
+
+        ctx.font = '800 12px "JetBrains Mono"';
+        ctx.fillStyle = pl.accent ? PALETTE.ember : PALETTE.cyan;
+        ctx.fillText(pl.target, rightStartX + 30, py + 74);
+
+        ctx.font = '900 34px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(pl.price, rightStartX + planW - 250, py + 52);
+
+        // Feature Bullets
+        pl.features.forEach((f, fi) => {
+          const fx = rightStartX + 30 + (fi % 2) * 440;
+          const fy = py + 120 + Math.floor(fi / 2) * 36;
+          ctx.font = '500 13px "JetBrains Mono"';
+          ctx.fillStyle = PALETTE.ash;
+          ctx.fillText(`✔ ${f}`, fx, fy);
+        });
+
+        ctx.restore();
+      });
+
+      ctx.restore();
+    }
+
+    // --------------------------------------------------------
+    // PLATE 05: 100% AUDITED DUAL TELEMETRY (41s - 51s)
+    // --------------------------------------------------------
+    function renderTelemetry(ctx, lt, p) {
+      ctx.save();
+
+      ctx.font = '700 14px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillText('// SECTION 4 : AUDITED CLIENT TELEMETRY & STRIPED CASH FLOW', 140, 140);
+
+      ctx.font = '900 44px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('100% RAW UNEDITED DASHBOARDS — US & INDIA', 140, 195);
+
+      const boxW = 790;
+      const boxH = 710;
+      const topY = 240;
+
+      // Card 1: Meta Ads Manager Live Telemetry (Dr. Meera Wellness Clinic)
+      const m1p = clamp(lt / 0.7, 0, 1);
+      ctx.save();
+      ctx.globalAlpha = m1p;
+      drawGlassCard(ctx, 140, topY, boxW, boxH, 'rgba(0, 255, 136, 0.4)');
+
+      ctx.font = '800 12px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.emerald;
+      ctx.fillText('LIVE ADS MANAGER &bull; DR. MEERA WELLNESS CLINIC (LAST 30 DAYS)', 170, topY + 45);
+
+      ctx.font = '900 28px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('ROAS: 4.2x TARGET &bull; ACTIVE SCALE', 170, topY + 90);
+
+      // 4 Small Data Boxes
+      const mStats = [
+        { label: 'AMOUNT SPENT', val: '₹4,78,100', sub: '▲ On Pace' },
+        { label: 'BOOKINGS + B2B LEADS', val: '654', sub: '▲ 44% Surge' },
+        { label: 'COST PER RESULT', val: '₹731', sub: '▼ 18% Cheaper' },
+        { label: 'LEAD → BOOKED CALL', val: '61%', sub: '▲ 9 pts Increase' }
+      ];
+
+      mStats.forEach((st, i) => {
+        const sx = 170 + (i % 2) * 370;
+        const sy = topY + 130 + Math.floor(i / 2) * 115;
+        drawGlassCard(ctx, sx, sy, 340, 95, 'rgba(255,255,255,0.06)', 'rgba(16, 22, 28, 0.8)');
+        ctx.font = '700 11px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.ash;
+        ctx.fillText(st.label, sx + 20, sy + 32);
+        ctx.font = '900 28px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(st.val, sx + 20, sy + 70);
+        ctx.font = '700 11px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.emerald;
+        ctx.fillText(st.sub, sx + 220, sy + 70);
+      });
+
+      // Campaign Table Snippet
+      const rows = [
+        { name: 'Doctor Consultation Retargeting', res: '286 bookings', spend: '₹1,17,300', cpr: '₹410' },
+        { name: 'B2B Corporate Wellness (HR)', res: '96 leads', spend: '₹1,77,600', cpr: '₹1,850' },
+        { name: 'Free Consultation Funnel', res: '214 leads', spend: '₹1,11,280', cpr: '₹520' }
+      ];
+
+      ctx.font = '700 12px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.cyan;
+      ctx.fillText('CAMPAIGN BREAKDOWN', 170, topY + 410);
+
+      rows.forEach((r, idx) => {
+        const ry = topY + 440 + idx * 80;
+        drawGlassCard(ctx, 170, ry, boxW - 60, 68, 'rgba(255,255,255,0.04)');
+        ctx.font = '700 14px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(r.name, 190, ry + 32);
+        ctx.font = '500 12px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.emerald;
+        ctx.fillText(`Results: ${r.res} &bull; Spend: ${r.spend} &bull; CPR: ${r.cpr}`, 190, ry + 54);
+      });
+      ctx.restore();
+
+      // Card 2: US Shopify & Viral Reel Stream
+      const m2p = clamp((lt - 0.4) / 0.7, 0, 1);
+      ctx.save();
+      ctx.globalAlpha = m2p;
+      drawGlassCard(ctx, 990, topY, boxW, boxH, 'rgba(255, 77, 18, 0.4)');
+
+      ctx.font = '800 12px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillText('US CLIENT E-COMMERCE & VIRAL REELS REPOSITORY', 1020, topY + 45);
+
+      // Hero Shopify Counter
+      ctx.font = '900 48px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('$1,054,098.00', 1020, topY + 110);
+      ctx.font = '700 13px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.ash;
+      ctx.fillText('US SHOPIFY STORE SCALE &bull; 10,851 ORDERS &bull; 3.46% CVR', 1020, topY + 140);
+
+      // Mini Graphic Wave
+      ctx.strokeStyle = PALETTE.signal;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let gx = 0; gx < boxW - 60; gx += 15) {
+        const gy = Math.sin(gx * 0.03 + lt * 4) * 22 + Math.cos(gx * 0.01) * 15;
+        const px = 1020 + gx;
+        const py = topY + 220 - gy;
+        if (gx === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Viral Reels List
+      const viralReels = [
+        { title: '🔥 20,000,000+ CUMULATIVE VIEWS', sub: 'Consecutive Viral Chain: 7.9M, 5.3M, 3.2M plays' },
+        { title: '📈 1.96M REEL REACH (98.8% NON-FOLLOWERS)', sub: 'Zero ad spend. High-retention hooks pulled 1.93M net-new eyes' },
+        { title: '⚡ 1.84L ORGANIC ACCOUNTS REACHED', sub: 'Dr. Meera: +96% reach surge &bull; 318 DM inquiries generated' },
+        { title: '🎯 GA4 GOAL CONVERSIONS: +1,023% SPIKE', sub: '8.97K new users &bull; 10x verified sales acceleration' }
+      ];
+
+      viralReels.forEach((v, idx) => {
+        const vy = topY + 270 + idx * 95;
+        drawGlassCard(ctx, 1020, vy, boxW - 60, 80, 'rgba(255,255,255,0.05)', 'rgba(18, 12, 16, 0.7)');
+        ctx.font = '800 15px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(v.title, 1040, vy + 32);
+        ctx.font = '500 12px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.ash;
+        ctx.fillText(v.sub, 1040, vy + 58);
+      });
+
+      ctx.restore();
+
+      ctx.restore();
+    }
+
+    // --------------------------------------------------------
+    // PLATE 06: FOUNDER MATRIX & 15-MIN AUDIT CTA (51s - 60s)
+    // --------------------------------------------------------
+    function renderMatrixCTA(ctx, lt, p) {
+      ctx.save();
+
+      ctx.font = '700 14px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillText('// WHY FOUNDERS SWITCH & GROW WITHOUT GUESSWORK', 140, 140);
+
+      ctx.font = '900 44px "Space Grotesk"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('OLD AGENCY MODEL VS. REKA CREATIVE LABS', 140, 195);
+
+      // Fast Comparative Table
+      const table = [
+        { feat: 'Creative Sprint Turnaround', old: '10–14 Days / batch', reka: '24–48 Hours (AI velocity)' },
+        { feat: 'Angle Variations Tested',   old: '3–5 static ads / month', reka: '50–100+ dynamic variations' },
+        { feat: 'Lead Response Latency',       old: '4–12 hours (manual sales)', reka: '< 5 seconds (AI WhatsApp)' },
+        { feat: 'Attribution & Reporting',     old: 'Monthly vanity PDFs', reka: 'Live profit & ROAS telemetry' },
+        { feat: 'Contract Lock-in',            old: '6–12 month lock-ins', reka: 'Milestone & performance-driven' }
+      ];
+
+      table.forEach((row, i) => {
+        const ry = 240 + i * 58;
+        drawGlassCard(ctx, 140, ry, 1640, 48, 'rgba(255,255,255,0.06)');
+        
+        ctx.font = '700 14px "Space Grotesk"';
+        ctx.fillStyle = PALETTE.bone;
+        ctx.fillText(row.feat, 170, ry + 30);
+
+        ctx.font = '500 13px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.crimson;
+        ctx.fillText(`✗ ${row.old}`, 640, ry + 30);
+
+        ctx.font = '800 14px "JetBrains Mono"';
+        ctx.fillStyle = PALETTE.emerald;
+        ctx.fillText(`⚡ ${row.reka}`, 1150, ry + 30);
+      });
+
+      // Huge Hero CTA Card Below
+      const ctaY = 560;
+      drawGlassCard(ctx, 140, ctaY, 1640, 410, PALETTE.signal, 'rgba(14, 10, 18, 0.98)');
+
+      ctx.font = '800 14px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillText('FOUNDER-TO-FOUNDER 15-MINUTE STRATEGY SESSION', 190, ctaY + 55);
+
+      ctx.font = '900 64px "Syne"';
+      ctx.fillStyle = PALETTE.bone;
+      ctx.fillText('RESERVE YOUR AI GROWTH AUDIT.', 190, ctaY + 130);
+
+      ctx.font = '500 18px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.ash;
+      ctx.fillText('We audit your ad accounts, identify creative fatigue, and map a 90-day scale roadmap.', 190, ctaY + 180);
+
+      // Glowing WhatsApp Button
+      const btnW = 600, btnH = 80;
+      const bx = 190, by = ctaY + 230;
+      ctx.fillStyle = PALETTE.signal;
+      ctx.fillRect(bx, by, btnW, btnH);
+      drawSpark(ctx, bx + btnW - 35, by + 40, 12, '', '#FFF');
+
+      ctx.font = '900 24px "Space Grotesk"';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('RESERVE VIA WHATSAPP  →  +91 83685 08556', bx + 36, by + 48);
+
+      // Meta Footnotes
+      ctx.font = '700 13px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.ember;
+      ctx.fillText('STRICTLY LIMITED TO 5 HIGH-INTENT BRANDS / MONTH &bull; ZERO OBLIGATION', 190, ctaY + 360);
+
+      ctx.font = '500 13px "JetBrains Mono"';
+      ctx.fillStyle = PALETTE.ash;
+      ctx.fillText('HQ: Sector 19, Noida, UP 201301  &bull;  www.rekacreativelabs.com', 950, ctaY + 360);
+
+      ctx.restore();
+    }
+
+    // ========================================================
+    // 5. MASTER DISPATCHER (DETERMINISTIC TIME FUNCTION)
+    // ========================================================
+    function renderFrame(t) {
+      const s = CANVAS.width / 1920;
+      CTX.save();
+      CTX.scale(s, s);
+
+      CTX.fillStyle = PALETTE.ink;
+      CTX.fillRect(0, 0, 1920, 1080);
+
+      drawCyberBackground(CTX, t);
+
+      // Active scene resolution
+      let activeIndex = SCENES.findIndex(s => t >= s.start && t < s.end);
+      if (activeIndex === -1) activeIndex = SCENES.length - 1;
+      const scene = SCENES[activeIndex];
+      const localTime = t - scene.start;
+      const progress = localTime / (scene.end - scene.start);
+
+      SCENE_TAG.innerHTML = scene.name;
+
+      // Dispatch scene
+      switch(scene.id) {
+        case 'genesis':    renderGenesis(CTX, localTime, progress); break;
+        case 'dualside':   renderDualSide(CTX, localTime, progress); break;
+        case 'engines':    renderEngines(CTX, localTime, progress); break;
+        case 'services':   renderServices(CTX, localTime, progress); break;
+        case 'telemetry':  renderTelemetry(CTX, localTime, progress); break;
+        case 'matrix_cta': renderMatrixCTA(CTX, localTime, progress); break;
+      }
+
+      // CRT Scanline Finish
+      CTX.fillStyle = 'rgba(0,0,0,0.12)';
+      for (let y = 0; y < 1080; y += 4) {
+        CTX.fillRect(0, y, 1920, 1.2);
+      }
+      CTX.restore();
+    }
+
+    // Animation Tick Loop
+    let lastBeatSecond = -1;
+    function tick() {
+      const now = performance.now();
+      const dt = (now - lastTimestamp) / 1000;
+      lastTimestamp = now;
+
+      if (isPlaying) {
+        currentTime += dt;
+        if (currentTime >= TOTAL_DURATION) {
+          currentTime = 0; // Seamless Loop
+        }
+        SCRUBBER.value = currentTime;
+        updateTimeUI();
+
+        // Audio beat triggering on quarter notes (120 BPM feel)
+        const currentBeat = Math.floor(currentTime * 2.0);
+        if (currentBeat !== lastBeatSecond) {
+          lastBeatSecond = currentBeat;
+          if (currentBeat % 4 === 0) triggerAudioBeat('kick');
+          else if (currentBeat % 2 === 0) triggerAudioBeat('snap');
+        }
+      }
+
+      renderFrame(currentTime);
+      requestAnimationFrame(tick);
+    }
+
+    function updateTimeUI() {
+      const curM = Math.floor(currentTime / 60).toString().padStart(2, '0');
+      const curS = (currentTime % 60).toFixed(2).padStart(5, '0');
+      const totM = Math.floor(TOTAL_DURATION / 60).toString().padStart(2, '0');
+      const totS = (TOTAL_DURATION % 60).toFixed(2).padStart(5, '0');
+      TIME_DISPLAY.innerText = `${curM}:${curS} / ${totM}:${totS}`;
+    }
+
+    // ========================================================
+    // 6. CONTROLS & HOTKEYS
+    // ========================================================
+    SCRUBBER.addEventListener('input', (e) => {
+      currentTime = parseFloat(e.target.value);
+      updateTimeUI();
+      renderFrame(currentTime);
+    });
+
+    PLAY_BTN.addEventListener('click', () => {
+      initAudio();
+      isPlaying = !isPlaying;
+      PLAY_ICON.innerText = isPlaying ? '❚❚' : '▶';
+      PLAY_TEXT.innerText = isPlaying ? 'PAUSE' : 'PLAY';
+    });
+
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      const idx = SCENES.findIndex(s => currentTime >= s.start && currentTime < s.end);
+      const prevIdx = Math.max(0, idx - 1);
+      currentTime = SCENES[prevIdx].start;
+      SCRUBBER.value = currentTime;
+      updateTimeUI();
+    });
+
+    document.getElementById('btn-next').addEventListener('click', () => {
+      const idx = SCENES.findIndex(s => currentTime >= s.start && currentTime < s.end);
+      const nextIdx = Math.min(SCENES.length - 1, idx + 1);
+      currentTime = SCENES[nextIdx].start;
+      SCRUBBER.value = currentTime;
+      updateTimeUI();
+    });
+
+    document.getElementById('btn-fs').addEventListener('click', () => {
+      const stage = document.getElementById('stage-container');
+      if (!document.fullscreenElement) stage.requestFullscreen();
+      else document.exitFullscreen();
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        PLAY_BTN.click();
+      } else if (e.code === 'KeyM') {
+        SOUND_BTN.click();
+      } else if (e.code === 'ArrowLeft') {
+        currentTime = Math.max(0, currentTime - (e.shiftKey ? 5 : 1));
+        SCRUBBER.value = currentTime;
+        updateTimeUI();
+      } else if (e.code === 'ArrowRight') {
+        currentTime = Math.min(TOTAL_DURATION, currentTime + (e.shiftKey ? 5 : 1));
+        SCRUBBER.value = currentTime;
+        updateTimeUI();
+      }
+    });
+
+    // Native Video Recording directly in Browser (VP9 WebM 60FPS)
+    document.getElementById('btn-record').addEventListener('click', () => {
+      const recBtn = document.getElementById('btn-record');
+      recBtn.innerText = '● RECORDING...';
+      recBtn.style.background = '#FF0055';
+      recBtn.style.color = '#FFF';
+
+      const stream = CANVAS.captureStream(60);
+      const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      const chunks = [];
+
+      recorder.ondataavailable = e => chunks.push(e.data);
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Reka_Creative_Labs_Cinema_Reel.webm';
+        a.click();
+        recBtn.innerText = '● REC MP4';
+        recBtn.style.background = '';
+        recBtn.style.color = '#ff3377';
+      };
+
+      currentTime = 0;
+      isPlaying = true;
+      recorder.start();
+
+      setTimeout(() => {
+        recorder.stop();
+        isPlaying = false;
+      }, TOTAL_DURATION * 1000);
+    });
+
+    // Start engine
+    requestAnimationFrame(tick);
+  </script>
+</body>
+</html>

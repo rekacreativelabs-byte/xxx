@@ -749,10 +749,10 @@ export default class Outro extends Scene {
           c.fillStyle = pressed ? rgba('ink') : rgba('bone');
           c.font = font(F.mono(500), 32);
           c.textAlign = 'center'; c.textBaseline = 'middle';
-          c.fillText('↻  Regenerate', cx, by + bh / 2 + 1);
-          c.textAlign = 'left'; c.textBaseline = 'alphabetic';
-          c.font = font(F.mono(400), 16); c.fillStyle = rgba('ash', 0.8);
-          c.fillText('this response could not be verified', bx + 34, by + bh + 34);
+          c.fillText('⚡  Scale With Reka', cx, by + bh / 2 + 1);
+          c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+          c.font = font(F.mono(400), 16); c.fillStyle = rgba('signal', 0.95);
+          c.fillText('Book 15-Min AI Growth Audit · WhatsApp: +91 83685 08556', cx, by + bh + 34);
           // cursor glides in, hovers, clicks on the beat
           const m = prog(k, 1.4, CLICK - 0.15, ease.inOutCubic);
           const px = lerp(W * 0.8, cx + 60, m), py = lerp(H * 0.9, by + bh / 2 + 10, m);

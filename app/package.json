@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "opentype.js": "^2.0.0",
-    "three": "^0.186.0"
+    "three": "^0.186.0",
+    "ws": "^8.22.0"
   }
 }
